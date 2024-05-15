@@ -1,0 +1,14 @@
+/* index.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: black;
+    background-image: url('/Users/mac/Documents/React_Website/my_scheduling_app/Frontend/public/Schedule_app/joanna-kosinska-1_CMoFsPfso-unsplash.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+
+
+  
+  /* Add more global styles as needed */
+  
