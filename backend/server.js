@@ -38,7 +38,7 @@ app.post('/signup', (req, res) => {
             hash  // Store the hashed password
         ];
 
-        // Executing the SQL query
+        // Executing the SQL query nb: when you want to add to the db, you have to treat the values as an array i.e [value] as opposed to 'value'
         db.query(sql, [values], (err, data) => {
             // If there's an error, log it and send a 500 response
             if (err) {
@@ -88,13 +88,14 @@ app.post('/login', (req, res) => {
     })
 })
 
+//use post to add data to the database 
 app.post('/create', (req, res) => {
     const sql = "INSERT INTO schedule (date, activity) VALUES (?)";
     const values = [
         req.body.date,
         req.body.activity
     ]
-
+    //query to insert data into the database with the values as an array
     db.query(sql, [values], (err, data) => {
         if (err) {
             console.log(err)
@@ -102,6 +103,61 @@ app.post('/create', (req, res) => {
         }
         // If everything went well, send a 201 response
         return res.status(201).json({ message: 'successful.' });
+    })
+})
+
+//use get to retrieve data from the database on a custom route
+app.get('/view/:id?', (req, res) => {
+    let sql;
+    let values;
+
+    if (req.params.id) {
+        // If id is provided, select the specific post
+        sql = "SELECT * FROM schedule WHERE id = ?";
+        values = [req.params.id];
+    } else {
+        // If id is not provided, select all posts
+        sql = "SELECT * FROM schedule";
+    }
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({error: "Error extracting from database"});
+        }
+        return res.status(200).json({message: 'Successful', data: data});
+    });
+});
+
+//connect this to the frontend update button
+app.put('/update/:id', (req, res) => {
+    const sql = "UPDATE schedule SET date = ?, activity = ? WHERE id = ?";
+    const values = [
+        req.body.date,
+        req.body.activity,
+        req.params.id
+    ]
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).json({error: "error updating database"});
+        }
+        return res.status(201).json({messge: 'Successful'});
+    })
+})
+
+//connect this to the frontend delete button
+app.delete('/delete/:id', (req, res) => {
+    const sql = "DELETE FROM schedule WHERE id = ?";
+    const values = [req.params.id]
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).json({error: "error deleting from database"});
+        }
+        return res.status(201).json({messge: 'Successful'});
     })
 })
 
